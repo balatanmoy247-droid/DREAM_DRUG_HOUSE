@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Dream Drugs House</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Dream Drugs House</h1>
+    <p>Your Health, Our Priority</p>
+ #fsji
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="doctors.html">Doctors</a>
+        <a href="appointment.html">Appointment</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+</header>
+
+<section class="contact-banner">
+    <h2>Contact Us</h2>
+    <p>We are always here to help you.</p>
+</section>
+
+<section class="contact-container">
+
+    <div class="contact-info">
+        <h2>Get In Touch</h2>
+
+        <p><strong>Shop Name:</strong> Dream Drugs House</p>
+        <p><strong>Address:</strong> Tangrakhal Bazar, Nadia, West Bengal - 741504</p>
+        <p><strong>Phone:</strong> <a href="tel:+91XXXXXXXXXX">Add Your Phone Number</a></p>
+        <p><strong>Email:</strong> Add Your Email Address</p>
+
+        <h3>Our Location</h3>
+
+        <iframe
+            src="https://www.google.com/maps?q=Tangrakhal%20Bazar%2C%20Nadia%2C%20West%20Bengal&output=embed"
+            width="100%"
+            height="300"
+            style="border:0;"
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <div class="contact-form">
+        <h2>Send Us a Message</h2>
+
+        <form onsubmit="sendMessage(event)">
+            <input type="text" id="name" placeholder="Your Name" required>
+
+            <input type="email" id="email" placeholder="Your Email" required>
+
+            <input type="tel" id="phone" placeholder="Your Phone Number" required>
+
+            <textarea id="message" placeholder="Write Your Message" required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+
+        <p id="contact-result"></p>
+    </div>
+
+</section>
+
+<footer>
+    <p>© 2026 Dream Drugs House. All Rights Reserved.</p>
+</footer>
+
+<script>
+function sendMessage(event) {
+    event.preventDefault();
+
+    document.getElementById("contact-result").innerText =
+        "Thank you! Your message has been entered.";
+
+    event.target.reset();
+}
+</script>
+
+</body>
+</html>

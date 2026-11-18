@@ -1,0 +1,420 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5faff;
+    color: #183047;
+}
+
+header {
+    background: white;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-shadow: 0 2px 12px #0001;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+    color: #087dbb;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #183047;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #0786c7;
+}
+
+.hero {
+    min-height: 500px;
+    background:
+    linear-gradient(90deg, #003b60dd, #003b6055),
+    url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1600")
+    center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    padding: 60px 8%;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 18px;
+}
+
+.hero-content p {
+    font-size: 19px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    display: inline-block;
+    background: #078acb;
+    color: white;
+    padding: 14px 25px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.btn:hover {
+    background: #005f94;
+}
+
+.welcome,
+.services,
+.doctors-preview,
+.appointment-banner,
+.contact-preview {
+    padding: 65px 8%;
+    text-align: center;
+}
+
+h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #087dbb;
+}
+
+.welcome p,
+.doctors-preview p,
+.appointment-banner p {
+    line-height: 1.8;
+}
+
+.service-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    margin-top: 35px;
+}
+
+.service-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px #0001;
+    padding-bottom: 22px;
+}
+
+.service-card img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+}
+
+.service-card h3 {
+    margin: 18px 0 10px;
+}
+
+.service-card p {
+    padding: 0 12px;
+}
+
+.doctors-preview {
+    background: white;
+}
+
+.appointment-banner {
+    background: #e2f4ff;
+}
+
+.contact-preview {
+    background: white;
+}
+
+footer {
+    background: #073653;
+    color: white;
+    text-align: center;
+    padding: 35px 15px;
+    line-height: 2;
+}
+
+@media(max-width: 700px) {
+    header {
+        justify-content: center;
+    }
+
+    nav {
+        justify-content: center;
+        gap: 14px;
+    }
+
+    .hero {
+        min-height: 400px;
+    }
+
+    .hero-content h1 {
+        font-size: 34px;
+    }
+}
+.doctor-banner {
+    background: linear-gradient(120deg, #06466b, #159bd1);
+    color: white;
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.doctor-banner h1 {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.doctor-list {
+    max-width: 1100px;
+    margin: 45px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.doctor-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px #0002;
+    text-align: center;
+    padding-bottom: 25px;
+}
+
+.doctor-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.doctor-info {
+    padding: 20px;
+}
+
+.doctor-info h2 {
+    font-size: 23px;
+}
+
+.doctor-info p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+.appointment-banner {
+    background: linear-gradient(120deg, #06466b, #159bd1);
+    color: white;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.appointment-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px #0002;
+}
+
+.appointment-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.appointment-container label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.appointment-container input,
+.appointment-container select,
+.appointment-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 7px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.appointment-container button {
+    margin-top: 20px;
+    width: 100%;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 25px;
+    padding: 20px;
+    background: #eaf7ff;
+    border-radius: 10px;
+}
+
+@media print {
+    header, footer, .appointment-banner,
+    #appointmentForm, #result button {
+        display: none;
+    }
+
+    #result {
+        background: white;
+    }
+}
+.contact-banner {
+    background: linear-gradient(120deg, #06466b, #159bd1);
+    color: white;
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.contact-banner h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.contact-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.contact-container h2 {
+    text-align: center;
+    margin: 35px 0 25px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.contact-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px #0001;
+}
+
+.contact-card h3 {
+    margin-bottom: 15px;
+    color: #087dbb;
+}
+
+.contact-card p {
+    line-height: 1.7;
+}
+
+.map-container {
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px #0002;
+}
+
+.contact-form {
+    max-width: 650px;
+    margin: auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px #0001;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+.contact-form button {
+    border: none;
+    cursor: pointer;
+}
+
+#contact-result {
+    text-align: center;
+    margin: 20px;
+    color: #087dbb;
+}
+
+@media(max-width: 600px) {
+    .contact-container {
+        padding: 12px;
+    }
+}
+/* Notification Bar */
+.notification-bar {
+    position: fixed;
+    right: 15px;
+    top: 180px;
+    width: 240px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    z-index: 999;
+    border-top: 4px solid #16a085;
+}
+
+.notification-bar h3 {
+    color: #16a085;
+    text-align: center;
+    margin-top: 0;
+}
+
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.notice:last-child {
+    border-bottom: none;
+}
+
+.notice span {
+    font-size: 43px;
+}
+
+.notice p {
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.5;
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .notification-bar {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: auto;
+        margin: 15px;
+    }
+}
