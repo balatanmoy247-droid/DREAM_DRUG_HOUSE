@@ -232,9 +232,10 @@ footer {
     box-shadow: 0 5px 20px #0002;
 }
 
-.appointment-container h2 {
+.appointment-container h1 {
     text-align: center;
     margin-bottom: 25px;
+    color: #087dbb;
 }
 
 .appointment-container label {

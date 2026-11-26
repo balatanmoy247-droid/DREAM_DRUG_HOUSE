@@ -60,13 +60,13 @@ appointmentForm.addEventListener("submit", function(event) {
 
     const problem =
         document.getElementById("problem").value;
-fetch("https://script.google.com/macros/s/AKfycbzq5KQ55KU8kp2VjU4gB3z99cDIso7ZkzjAdE0KXzMetBYBl-qYJdWBoGOkktpKnelF/exec" {
+fetch("https://script.google.com/macros/s/AKfycbzq5KQ55KU8kp2VjU4gB3z99cDIso7ZkzjAdE0KXzMetBYBl-qYJdWBoGOkktpKnelF/exec", {
   method: "POST",
   body: JSON.stringify({
     patientName: patientName,
     phone: phone,
     doctor: doctor,
-    date: date,,
+    date: date,
     time: time
   })
 })
