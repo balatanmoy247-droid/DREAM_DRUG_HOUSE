@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Dream Drugs House</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-header {
+      background: linear-gradient(120deg, #06466b, #159bd1);
+      color: #fff;
+      padding: 20px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .admin-header h1 { font-size: 24px; }
+    .admin-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .badge-email {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .btn-sm {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-secondary { background: #5a6c7d; color: #fff; }
+    .btn-secondary:hover { background: #41505e; }
+    .btn-success { background: #16a085; color: #fff; }
+    .btn-success:hover { background: #117a65; }
+    .btn-primary { background: #078acb; color: #fff; }
+    .btn-primary:hover { background: #005f94; }
+
+    .admin-container {
+      max-width: 1250px;
+      margin: 25px auto;
+      padding: 0 20px 50px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    .tab-btn {
+      padding: 12px 20px;
+      background: #fff;
+      border: 2px solid #078acb;
+      color: #078acb;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .tab-btn.active {
+      background: #078acb;
+      color: #fff;
+    }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+
+    .panel-card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 14px;
+    }
+    .full-width { grid-column: 1 / -1; }
+
+    .admin-doctor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px;
+    }
+    .admin-doctor-card {
+      background: #fff;
+      border: 1px solid #e1edf5;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .admin-doctor-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      background: #eaf4fa;
+    }
+    .admin-doctor-body {
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-doctor-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    /* Appointments + Chat Layout */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .split-layout { grid-template-columns: 1fr; }
+    }
+    .appt-item {
+      border: 1px solid #dceaf3;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      background: #fdfeff;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .appt-item.selected {
+      border: 2px solid #078acb;
+      background: #eef8ff;
+    }
+    .appt-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status-Pending { background: #fff3cd; color: #856404; }
+    .status-Confirmed { background: #d4edda; color: #155724; }
+    .status-Completed { background: #d1ecf1; color: #0c5460; }
+    .status-Cancelled { background: #f8d7da; color: #721c24; }
+
+    .chat-box {
+      border: 1px solid #d5e6f2;
+      border-radius: 12px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 540px;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #087dbb;
+      color: #fff;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      background: #f4f9fd;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .msg-bubble {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.45;
+      word-wrap: break-word;
+    }
+    .msg-admin {
+      align-self: flex-end;
+      background: #078acb;
+      color: #fff;
+      border-bottom-right-radius: 2px;
+    }
+    .msg-customer {
+      align-self: flex-start;
+      background: #fff;
+      color: #183047;
+      border: 1px solid #d8e6f0;
+      border-bottom-left-radius: 2px;
+    }
+    .msg-meta {
+      font-size: 11px;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid #e1edf5;
+      background: #fff;
+    }
+    .chat-input-bar input {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .contact-msg-card {
+      border: 1px solid #dceaf3;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #fafdff;
+    }
+    #loadingGuard {
+      text-align: center;
+      padding: 80px 20px;
+      font-size: 18px;
+      color: #087dbb;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingGuard">Verifying admin session...</div>
+
+<div id="adminApp" style="display:none;">
+  <div class="admin-header">
+    <div>
+      <h1>💊 Dream Drugs House — Admin Panel</h1>
+    </div>
+    <div class="admin-header-right">
+      <span class="badge-email" id="adminEmailBadge"></span>
+      <a href="index.html" class="btn-sm btn-secondary" target="_blank">View Website</a>
+      <button id="logoutBtn" class="btn-sm btn-danger">Logout</button>
+    </div>
+  </div>
+
+  <div class="admin-container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="doctorsTab">👨‍⚕️ Doctors Manager</button>
+      <button class="tab-btn" data-tab="appointmentsTab">📅 Appointments & Chat (<span id="apptCount">0</span>)</button>
+      <button class="tab-btn" data-tab="contactsTab">✉️ Contact Messages (<span id="contactCount">0</span>)</button>
+      <button class="tab-btn" data-tab="settingsTab">⚙️ Shop Contact Info</button>
+    </div>
+
+    <!-- TAB 1: DOCTORS MANAGER -->
+    <section id="doctorsTab" class="tab-section active">
+      <div class="panel-card">
+        <h2 id="doctorFormTitle">Add New Doctor</h2>
+        <form id="doctorForm">
+          <input type="hidden" id="editDoctorId">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="docName">Doctor Name *</label>
+              <input type="text" id="docName" placeholder="e.g., Dr. Rajib Sikder" required>
+            </div>
+            <div class="form-group">
+              <label for="docDays">Available Days *</label>
+              <input type="text" id="docDays" placeholder="e.g., Saturday" required>
+            </div>
+            <div class="form-group">
+              <label for="docTime">Available Time *</label>
+              <input type="text" id="docTime" placeholder="e.g., 9 AM - 11 AM" required>
+            </div>
+            <div class="form-group">
+              <label for="docPhotoUrl">Photo URL (Paste link)</label>
+              <input type="url" id="docPhotoUrl" placeholder="https://example.com/photo.jpg">
+            </div>
+            <div class="form-group">
+              <label for="docPhotoFile">OR Upload Photo from Device</label>
+              <input type="file" id="docPhotoFile" accept="image/*">
+            </div>
+            <div class="form-group full-width">
+              <label for="docDescription">Description / Qualifications *</label>
+              <textarea id="docDescription" rows="3" placeholder="e.g., MBBS (Cal), MD Medicine..." required></textarea>
+            </div>
+          </div>
+          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="submit" class="btn-sm btn-primary" id="saveDoctorBtn">Save Doctor</button>
+            <button type="button" class="btn-sm btn-secondary" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:18px;">
+          <h2 style="margin:0;">Existing Doctors</h2>
+          <button type="button" class="btn-sm btn-success" id="seedDoctorsBtn">Import Initial 2 Doctors</button>
+        </div>
+        <div id="adminDoctorList" class="admin-doctor-grid">
+          <p>Loading doctors...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: APPOINTMENTS & CHAT -->
+    <section id="appointmentsTab" class="tab-section">
+      <div class="split-layout">
+        <div class="panel-card" style="max-height:600px; overflow-y:auto;">
+          <h2>Appointment Applications</h2>
+          <div id="appointmentsList">
+            <p>Loading applications...</p>
+          </div>
+        </div>
+
+        <div class="chat-box">
+          <div class="chat-header">
+            <div>
+              <strong id="chatPatientTitle">Select an appointment to chat</strong>
+              <div id="chatPatientSub" style="font-size:12px; opacity:0.9;"></div>
+            </div>
+            <div id="chatStatusControl" style="display:none;">
+              <select id="statusSelect" style="padding:6px 10px; border-radius:6px; border:none; font-weight:bold;">
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="adminChatMessages">
+            <p style="text-align:center; color:#666; margin-top:40px;">Click any appointment on the left to view details and reply to the patient.</p>
+          </div>
+
+          <form class="chat-input-bar" id="adminChatForm" style="display:none;">
+            <input type="text" id="adminChatInput" placeholder="Write a reply to the patient..." required>
+            <button type="submit" class="btn-sm btn-primary">Send Reply</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: CONTACT MESSAGES -->
+    <section id="contactsTab" class="tab-section">
+      <div class="panel-card">
+        <h2>Contact Us Submissions</h2>
+        <div id="contactsList">
+          <p>Loading messages...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SHOP SETTINGS -->
+    <section id="settingsTab" class="tab-section">
+      <div class="panel-card">
+        <h2>Edit Shop Contact Information</h2>
+        <p style="margin-bottom:15px; color:#555;">Updates the details shown on your Contact Us page.</p>
+        <form id="settingsForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="shopPhone">Phone Number</label>
+              <input type="text" id="shopPhone" placeholder="+91 9876543210" required>
+            </div>
+            <div class="form-group">
+              <label for="shopEmail">Shop Email</label>
+              <input type="email" id="shopEmail" placeholder="dreamdrugshouse@gmail.com" required>
+            </div>
+            <div class="form-group full-width">
+              <label for="shopAddress">Shop Address</label>
+              <input type="text" id="shopAddress" placeholder="Tangrakhal Bazar, Nadia, West Bengal - 741504" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-sm btn-primary" style="margin-top:16px;">Save Shop Info</button>
+          <span id="settingsStatus" style="margin-left:12px; color:#16a085; font-weight:bold;"></span>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script type="module">
+  import { auth, db, ADMIN_EMAIL, escapeHtml } from "./firebase-config.js";
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    collection, doc, addDoc, updateDoc, deleteDoc, setDoc, getDoc,
+    onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  let selectedAppointmentId = null;
+  let unsubscribeChat = null;
+  let doctorsCache = {};
+
+  // 1. Auth Guard
+  onAuthStateChanged(auth, async (user) => {
+    if (!user || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+      if (user) await signOut(auth);
+      window.location.href = "adminlogin.html";
+      return;
+    }
+    document.getElementById("loadingGuard").style.display = "none";
+    document.getElementById("adminApp").style.display = "block";
+    document.getElementById("adminEmailBadge").textContent = user.email;
+    initAdminData();
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "adminlogin.html";
+  });
+
+  // Tab Switching
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-section").forEach(s => s.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // Helper: Compress uploaded image file to compact Base64 JPEG
+  function compressImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxW = 550;
+          const scale = Math.min(1, maxW / img.width);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.75));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function initAdminData() {
+    loadDoctorsRealtime();
+    loadAppointmentsRealtime();
+    loadContactsRealtime();
+    loadShopSettings();
+  }
+
+  // ==================== DOCTORS MANAGER ====================
+  function loadDoctorsRealtime() {
+    const q = query(collection(db, "doctors"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      const container = document.getElementById("adminDoctorList");
+      doctorsCache = {};
+      if (snapshot.empty) {
+        container.innerHTML = "<p>No doctors added yet. Add one above or click 'Import Initial 2 Doctors'.</p>";
+        return;
+      }
+
+      container.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const d = docSnap.data();
+        const id = docSnap.id;
+        doctorsCache[id] = d;
+
+        const card = document.createElement("div");
+        card.className = "admin-doctor-card";
+        card.innerHTML = `
+          <img src="${escapeHtml(d.photo || 'https://via.placeholder.com/400x280?text=Doctor')}" alt="${escapeHtml(d.name)}">
+          <div class="admin-doctor-body">
+            <h3>${escapeHtml(d.name)}</h3>
+            <p style="font-size:14px; color:#444;">${escapeHtml(d.description)}</p>
+            <p style="font-size:14px;"><b>Available:</b> ${escapeHtml(d.available)}</p>
+            <p style="font-size:14px;"><b>Time:</b> ${escapeHtml(d.time)}</p>
+            <div class="admin-doctor-actions">
+              <button class="btn-sm btn-primary" data-edit="${id}">Edit</button>
+              <button class="btn-sm btn-danger" data-delete="${id}">Delete</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      container.querySelectorAll("[data-edit]").forEach(btn => {
+        btn.addEventListener("click", () => startEditDoctor(btn.dataset.edit));
+      });
+      container.querySelectorAll("[data-delete]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (confirm("Delete this doctor from the website?")) {
+            await deleteDoc(doc(db, "doctors", btn.dataset.delete));
+          }
+        });
+      });
+    });
+  }
+
+  function startEditDoctor(id) {
+    const d = doctorsCache[id];
+    if (!d) return;
+    document.getElementById("editDoctorId").value = id;
+    document.getElementById("docName").value = d.name || "";
+    document.getElementById("docDays").value = d.available || "";
+    document.getElementById("docTime").value = d.time || "";
+    document.getElementById("docDescription").value = d.description || "";
+    document.getElementById("docPhotoUrl").value = (d.photo && d.photo.startsWith("http")) ? d.photo : "";
+    document.getElementById("docPhotoFile").value = "";
+    document.getElementById("doctorFormTitle").textContent = "Edit Doctor";
+    document.getElementById("saveDoctorBtn").textContent = "Update Doctor";
+    document.getElementById("cancelEditBtn").style.display = "inline-block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function resetDoctorForm() {
+    document.getElementById("doctorForm").reset();
+    document.getElementById("editDoctorId").value = "";
+    document.getElementById("doctorFormTitle").textContent = "Add New Doctor";
+    document.getElementById("saveDoctorBtn").textContent = "Save Doctor";
+    document.getElementById("cancelEditBtn").style.display = "none";
+  }
+
+  document.getElementById("cancelEditBtn").addEventListener("click", resetDoctorForm);
+
+  document.getElementById("doctorForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById("saveDoctorBtn");
+    saveBtn.disabled = true;
+
+    try {
+      const editId = document.getElementById("editDoctorId").value;
+      const name = document.getElementById("docName").value.trim();
+      const available = document.getElementById("docDays").value.trim();
+      const time = document.getElementById("docTime").value.trim();
+      const description = document.getElementById("docDescription").value.trim();
+      const photoUrlInput = document.getElementById("docPhotoUrl").value.trim();
+      const photoFile = document.getElementById("docPhotoFile").files[0];
+
+      let photo = photoUrlInput;
+      if (photoFile) {
+        photo = await compressImageToBase64(photoFile);
+      } else if (!photo && editId && doctorsCache[editId]) {
+        photo = doctorsCache[editId].photo || "";
+      }
+
+      if (editId) {
+        await updateDoc(doc(db, "doctors", editId), { name, available, time, description, photo });
+      } else {
+        await addDoc(collection(db, "doctors"), {
+          name, available, time, description, photo,
+          createdAt: serverTimestamp()
+        });
+      }
+      resetDoctorForm();
+    } catch (err) {
+      alert("Error saving doctor: " + err.message);
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  // One-click migration of your original 2 doctors
+  document.getElementById("seedDoctorsBtn").addEventListener("click", async () => {
+    const initialDoctors = [
+      {
+        name: "Dr. Rajib Sikder",
+        description: "MBBS (Cal), MD Medicine, ACMDC (PHFI)",
+        available: "Saturday",
+        time: "9 AM - 11 AM",
+        photo: "https://drrajibsikder.com/_next/static/media/aboutPhoto3.6ecaa2b3.jpg"
+      },
+      {
+        name: "Dr. T R Saha",
+        description: "M.B.B.S., M.D., (PGT) Dermatology, Attached with Kolkata Tropical Medical College & Hospital, Venereology & Leprosy Consultant / Specialist Dermatologist (Gold Medalist), Medicine Specialist",
+        available: "Saturday",
+        time: "12 PM - 2 PM",
+        photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlxU-SFM24YLH-BPDHYXYAmVaRbiRc9KYX6l39HvY20w&s=10"
+      }
+    ];
+    for (const d of initialDoctors) {
+      await addDoc(collection(db, "doctors"), { ...d, createdAt: serverTimestamp() });
+    }
+    alert("Initial 2 doctors imported!");
+  });
+
+  // ==================== APPOINTMENTS & CHAT ====================
+  function loadAppointmentsRealtime() {
+    const q = query(collection(db, "appointments"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      document.getElementById("apptCount").textContent = snapshot.size;
+      const list = document.getElementById("appointmentsList");
+
+      if (snapshot.empty) {
+        list.innerHTML = "<p>No appointment applications yet.</p>";
+        return;
+      }
+
+      list.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const a = docSnap.data();
+        const id = docSnap.id;
+        const status = a.status || "Pending";
+
+        const div = document.createElement("div");
+        div.className = "appt-item" + (selectedAppointmentId === id ? " selected" : "");
+        div.innerHTML = `
+          <div class="appt-top">
+            <strong>${escapeHtml(a.patientName)}</strong>
+            <span class="status-pill status-${escapeHtml(status)}">${escapeHtml(status)}</span>
+          </div>
+          <div style="font-size:13px; color:#444; line-height:1.6;">
+            <div><b>Doctor:</b> ${escapeHtml(a.doctor)} | <b>Date:</b> ${escapeHtml(a.date || "N/A")}</div>
+            <div><b>Phone:</b> ${escapeHtml(a.phone)} | <b>Gender:</b> ${escapeHtml(a.gender)}</div>
+            <div><b>Gmail:</b> ${escapeHtml(a.userEmail)}</div>
+            <div><b>Problem:</b> ${escapeHtml(a.problem || "Not provided")}</div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px;">
+            <button class="btn-sm btn-primary open-chat-btn">Open Chat</button>
+            <button class="btn-sm btn-danger delete-appt-btn">Delete</button>
+          </div>
+        `;
+
+        div.querySelector(".open-chat-btn").addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          openAppointmentChat(id, a);
+        });
+        div.addEventListener("click", () => openAppointmentChat(id, a));
+
+        div.querySelector(".delete-appt-btn").addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          if (confirm("Delete this appointment application?")) {
+            await deleteDoc(doc(db, "appointments", id));
+            if (selectedAppointmentId === id) {
+              selectedAppointmentId = null;
+              if (unsubscribeChat) unsubscribeChat();
+              document.getElementById("adminChatForm").style.display = "none";
+              document.getElementById("chatStatusControl").style.display = "none";
+              document.getElementById("chatPatientTitle").textContent = "Select an appointment to chat";
+              document.getElementById("chatPatientSub").textContent = "";
+              document.getElementById("adminChatMessages").innerHTML = "";
+            }
+          }
+        });
+
+        list.appendChild(div);
+      });
+    });
+  }
+
+  function openAppointmentChat(apptId, apptData) {
+    selectedAppointmentId = apptId;
+    document.getElementById("chatPatientTitle").textContent = `${apptData.patientName} — ${apptData.doctor}`;
+    document.getElementById("chatPatientSub").textContent = `${apptData.userEmail} | Phone: ${apptData.phone} | Date: ${apptData.date || "N/A"}`;
+    document.getElementById("chatStatusControl").style.display = "block";
+    document.getElementById("statusSelect").value = apptData.status || "Pending";
+    document.getElementById("adminChatForm").style.display = "flex";
+
+    // Highlight active card
+    document.querySelectorAll(".appt-item").forEach(el => el.classList.remove("selected"));
+
+    if (unsubscribeChat) unsubscribeChat();
+
+    const msgQuery = query(
+      collection(db, "appointments", apptId, "messages"),
+      orderBy("createdAt", "asc")
+    );
+
+    unsubscribeChat = onSnapshot(msgQuery, (snap) => {
+      const box = document.getElementById("adminChatMessages");
+      box.innerHTML = "";
+      if (snap.empty) {
+        box.innerHTML = "<p style='text-align:center; color:#777;'>No chat messages yet. Send the first reply below.</p>";
+        return;
+      }
+      snap.forEach((mSnap) => {
+        const m = mSnap.data();
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble " + (m.senderRole === "admin" ? "msg-admin" : "msg-customer");
+        bubble.innerHTML = `
+          <div class="msg-meta">${escapeHtml(m.senderName || (m.senderRole === "admin" ? "Admin" : "Patient"))}</div>
+          <div>${escapeHtml(m.text)}</div>
+        `;
+        box.appendChild(bubble);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+  }
+
+  document.getElementById("statusSelect").addEventListener("change", async (e) => {
+    if (!selectedAppointmentId) return;
+    const newStatus = e.target.value;
+    await updateDoc(doc(db, "appointments", selectedAppointmentId), { status: newStatus });
+    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
+      senderRole: "admin",
+      senderName: "Admin (Status Update)",
+      text: `Appointment status updated to: ${newStatus}`,
+      createdAt: serverTimestamp()
+    });
+  });
+
+  document.getElementById("adminChatForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!selectedAppointmentId) return;
+    const input = document.getElementById("adminChatInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = "";
+    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
+      senderRole: "admin",
+      senderName: "Admin (Dream Drugs House)",
+      text,
+      createdAt: serverTimestamp()
+    });
+  });
+
+  // ==================== CONTACT US MESSAGES ====================
+  function loadContactsRealtime() {
+    const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      document.getElementById("contactCount").textContent = snapshot.size;
+      const container = document.getElementById("contactsList");
+
+      if (snapshot.empty) {
+        container.innerHTML = "<p>No contact messages yet.</p>";
+        return;
+      }
+
+      container.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const c = docSnap.data();
+        const id = docSnap.id;
+        const timeStr = c.createdAt?.toDate ? c.createdAt.toDate().toLocaleString() : "Just now";
+
+        const card = document.createElement("div");
+        card.className = "contact-msg-card";
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+            <strong>${escapeHtml(c.name)}</strong>
+            <span style="font-size:12px; color:#666;">${escapeHtml(timeStr)}</span>
+          </div>
+          <p style="font-size:14px; margin-bottom:6px;">
+            <b>Email:</b> ${escapeHtml(c.email)} | <b>Phone:</b> ${escapeHtml(c.phone)}
+          </p>
+          <p style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e6eff5; margin-bottom:10px;">
+            ${escapeHtml(c.message)}
+          </p>
+          <button class="btn-sm btn-danger" data-del-contact="${id}">Delete Message</button>
+        `;
+        card.querySelector("[data-del-contact]").addEventListener("click", async () => {
+          if (confirm("Delete this contact message?")) {
+            await deleteDoc(doc(db, "contacts", id));
+          }
+        });
+        container.appendChild(card);
+      });
+    });
+  }
+
+  // ==================== SHOP SETTINGS ====================
+  async function loadShopSettings() {
+    const snap = await getDoc(doc(db, "settings", "shopInfo"));
+    if (snap.exists()) {
+      const s = snap.data();
+      document.getElementById("shopPhone").value = s.phone || "";
+      document.getElementById("shopEmail").value = s.email || "";
+      document.getElementById("shopAddress").value = s.address || "";
+    } else {
+      document.getElementById("shopAddress").value = "Tangrakhal Bazar, Nadia, West Bengal - 741504";
+    }
+  }
+
+  document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await setDoc(doc(db, "settings", "shopInfo"), {
+      phone: document.getElementById("shopPhone").value.trim(),
+      email: document.getElementById("shopEmail").value.trim(),
+      address: document.getElementById("shopAddress").value.trim()
+    });
+    const st = document.getElementById("settingsStatus");
+    st.textContent = "Saved!";
+    setTimeout(() => (st.textContent = ""), 3000);
+  });
+</script>
+
+</body>
+</html>

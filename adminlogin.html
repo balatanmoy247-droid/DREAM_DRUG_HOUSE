@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Dream Drugs House</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-wrapper {
+      min-height: calc(100vh - 140px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    .login-card h2 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .login-card p.sub {
+      text-align: center;
+      color: #555;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .login-card label {
+      display: block;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 15px;
+    }
+    .login-card button {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      margin-top: 22px;
+    }
+    .error-msg {
+      margin-top: 14px;
+      color: #c0392b;
+      background: #fdecea;
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">💊 DREAM DRUGS HOUSE</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="doctors.html">Our Doctors</a>
+    <a href="appointment.html">Appointment</a>
+    <a href="contact.html">Contact Us</a>
+  </nav>
+</header>
+
+<main class="login-wrapper">
+  <div class="login-card">
+    <h2>Admin Panel Login</h2>
+    <p class="sub">Authorized owner access only</p>
+
+    <form id="adminLoginForm">
+      <label for="email">Admin Email</label>
+      <input type="email" id="email" value="tanmoy@bca.bala" required autocomplete="username">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter admin password" required autocomplete="current-password">
+
+      <button type="submit" class="btn" id="loginBtn">Login to Admin Panel</button>
+    </form>
+
+    <div id="errorMsg" class="error-msg"></div>
+  </div>
+</main>
+
+<footer>
+  <h3>DREAM DRUGS HOUSE</h3>
+  <p>© 2026 All Rights Reserved.</p>
+</footer>
+
+<script type="module">
+  import { auth, ADMIN_EMAIL } from "./firebase-config.js";
+  import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const form = document.getElementById("adminLoginForm");
+  const errorMsg = document.getElementById("errorMsg");
+  const loginBtn = document.getElementById("loginBtn");
+
+  function showError(text) {
+    errorMsg.textContent = text;
+    errorMsg.style.display = "block";
+  }
+
+  // Auto-redirect if already logged in as admin
+  onAuthStateChanged(auth, (user) => {
+    if (user && user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+      window.location.href = "admin.html";
+    }
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorMsg.style.display = "none";
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+
+    if (email !== ADMIN_EMAIL.toLowerCase()) {
+      showError("Access denied. Only the authorized admin email can log in here.");
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Verifying...";
+
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      if (cred.user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        await signOut(auth);
+        showError("Unauthorized account.");
+        return;
+      }
+      window.location.href = "admin.html";
+    } catch (err) {
+      let msg = "Login failed. Check your email and password.";
+      if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+        msg = "Invalid email or password. Make sure tanmoy@bca.bala is added in Firebase Authentication.";
+      } else if (err.code === "auth/too-many-requests") {
+        msg = "Too many failed attempts. Please wait a minute and try again.";
+      }
+      showError(msg);
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Login to Admin Panel";
+    }
+  });
+</script>
+
+</body>
+</html>

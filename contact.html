@@ -1,84 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Dream Drugs House</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - Dream Drugs House</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
-    <h1>Dream Drugs House</h1>
-    <p>Your Health, Our Priority</p>
- #fsji
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="doctors.html">Doctors</a>
-        <a href="appointment.html">Appointment</a>
-        <a href="contact.html">Contact Us</a>
-    </nav>
+  <div class="logo">💊 DREAM DRUGS HOUSE</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="doctors.html">Our Doctors</a>
+    <a href="appointment.html">Appointment</a>
+    <a href="contact.html">Contact Us</a>
+  </nav>
 </header>
 
 <section class="contact-banner">
-    <h2>Contact Us</h2>
-    <p>We are always here to help you.</p>
+  <h1>Contact Us</h1>
+  <p>We are always here to help you.</p>
 </section>
 
 <section class="contact-container">
+  <div class="contact-info">
+    <h2>Get In Touch</h2>
 
-    <div class="contact-info">
-        <h2>Get In Touch</h2>
+    <p><strong>Shop Name:</strong> Dream Drugs House</p>
+    <p><strong>Address:</strong> <span id="displayAddress">Tangrakhal Bazar, Nadia, West Bengal - 741504</span></p>
+    <p><strong>Phone:</strong> <a id="displayPhone" href="tel:+91XXXXXXXXXX">Update in Admin Panel</a></p>
+    <p><strong>Email:</strong> <span id="displayEmail">Update in Admin Panel</span></p>
 
-        <p><strong>Shop Name:</strong> Dream Drugs House</p>
-        <p><strong>Address:</strong> Tangrakhal Bazar, Nadia, West Bengal - 741504</p>
-        <p><strong>Phone:</strong> <a href="tel:+91XXXXXXXXXX">Add Your Phone Number</a></p>
-        <p><strong>Email:</strong> Add Your Email Address</p>
-
-        <h3>Our Location</h3>
-
-        <iframe
-            src="https://www.google.com/maps?q=Tangrakhal%20Bazar%2C%20Nadia%2C%20West%20Bengal&output=embed"
-            width="100%"
-            height="300"
-            style="border:0;"
-            loading="lazy">
-        </iframe>
+    <h3 style="margin:20px 0 10px;">Our Location</h3>
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps?q=Tangrakhal%20Bazar%2C%20Nadia%2C%20West%20Bengal&output=embed"
+        width="100%"
+        height="300"
+        style="border:0;"
+        loading="lazy">
+      </iframe>
     </div>
+  </div>
 
-    <div class="contact-form">
-        <h2>Send Us a Message</h2>
+  <div class="contact-form" style="margin-top:35px;">
+    <h2>Send Us a Message</h2>
 
-        <form onsubmit="sendMessage(event)">
-            <input type="text" id="name" placeholder="Your Name" required>
+    <form id="contactForm" style="display:flex; flex-direction:column; gap:12px;">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <input type="tel" id="phone" placeholder="Your Phone Number" required>
+      <textarea id="message" rows="4" placeholder="Write Your Message" required></textarea>
+      <button type="submit" class="btn" id="sendContactBtn">Send Message</button>
+    </form>
 
-            <input type="email" id="email" placeholder="Your Email" required>
-
-            <input type="tel" id="phone" placeholder="Your Phone Number" required>
-
-            <textarea id="message" placeholder="Write Your Message" required></textarea>
-
-            <button type="submit">Send Message</button>
-        </form>
-
-        <p id="contact-result"></p>
-    </div>
-
+    <p id="contact-result"></p>
+  </div>
 </section>
 
 <footer>
-    <p>© 2026 Dream Drugs House. All Rights Reserved.</p>
+  <h3>DREAM DRUGS HOUSE</h3>
+  <p>Care • Trust • Health</p>
+  <p>© 2026 Dream Drugs House. All Rights Reserved.</p>
 </footer>
 
-<script>
-function sendMessage(event) {
-    event.preventDefault();
+<script type="module">
+  import { db } from "./firebase-config.js";
+  import { collection, addDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    document.getElementById("contact-result").innerText =
-        "Thank you! Your message has been entered.";
+  // Load admin-editable shop contact details
+  onSnapshot(doc(db, "settings", "shopInfo"), (snap) => {
+    if (!snap.exists()) return;
+    const s = snap.data();
+    if (s.address) document.getElementById("displayAddress").textContent = s.address;
+    if (s.email) document.getElementById("displayEmail").textContent = s.email;
+    if (s.phone) {
+      const phoneLink = document.getElementById("displayPhone");
+      phoneLink.textContent = s.phone;
+      phoneLink.href = "tel:" + s.phone.replace(/\s+/g, "");
+    }
+  });
 
-    event.target.reset();
-}
+  // Save contact message to Firestore
+  document.getElementById("contactForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("sendContactBtn");
+    const result = document.getElementById("contact-result");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+      await addDoc(collection(db, "contacts"), {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        message: document.getElementById("message").value.trim(),
+        createdAt: serverTimestamp()
+      });
+
+      result.style.color = "#16a085";
+      result.textContent = "Thank you! Your message has been sent to Dream Drugs House.";
+      e.target.reset();
+    } catch (err) {
+      result.style.color = "#c0392b";
+      result.textContent = "Error sending message: " + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Send Message";
+    }
+  });
 </script>
 
 </body>
