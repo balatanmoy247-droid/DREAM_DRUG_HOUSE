@@ -619,7 +619,7 @@
     alert("Initial 2 doctors imported!");
   });
 
-  // ==================== APPOINTMENTS & CHAT ====================
+ // ==================== APPOINTMENTS & CHAT ====================
   function loadAppointmentsRealtime() {
     const q = query(collection(db, "appointments"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
@@ -636,19 +636,24 @@
         const a = docSnap.data();
         const id = docSnap.id;
         const status = a.status || "Pending";
+        const submittedAt = a.createdAt?.toDate ? a.createdAt.toDate().toLocaleString() : "Just now";
 
         const div = document.createElement("div");
         div.className = "appt-item" + (selectedAppointmentId === id ? " selected" : "");
+        div.dataset.apptId = id;
         div.innerHTML = `
           <div class="appt-top">
-            <strong>${escapeHtml(a.patientName)}</strong>
+            <strong>${escapeHtml(a.patientName)} <span style="font-size:12px; color:#087dbb;">(${escapeHtml(a.trackingCode || "No ID")})</span></strong>
             <span class="status-pill status-${escapeHtml(status)}">${escapeHtml(status)}</span>
           </div>
           <div style="font-size:13px; color:#444; line-height:1.6;">
-            <div><b>Doctor:</b> ${escapeHtml(a.doctor)} | <b>Date:</b> ${escapeHtml(a.date || "N/A")}</div>
+            <div><b>Doctor:</b> ${escapeHtml(a.doctor)}</div>
             <div><b>Phone:</b> ${escapeHtml(a.phone)} | <b>Gender:</b> ${escapeHtml(a.gender)}</div>
-            <div><b>Gmail:</b> ${escapeHtml(a.userEmail)}</div>
             <div><b>Problem:</b> ${escapeHtml(a.problem || "Not provided")}</div>
+            <div style="font-size:12px; color:#667; margin-top:4px;">
+              <b>IP:</b> ${escapeHtml(a.ipAddress || "Unavailable")} | <b>Device:</b> ${escapeHtml(a.deviceInfo || "Unknown")}
+            </div>
+            <div style="font-size:11px; color:#888;">Submitted: ${escapeHtml(submittedAt)}</div>
           </div>
           <div style="margin-top:10px; display:flex; gap:8px;">
             <button class="btn-sm btn-primary open-chat-btn">Open Chat</button>
@@ -685,14 +690,17 @@
 
   function openAppointmentChat(apptId, apptData) {
     selectedAppointmentId = apptId;
-    document.getElementById("chatPatientTitle").textContent = `${apptData.patientName} — ${apptData.doctor}`;
-    document.getElementById("chatPatientSub").textContent = `${apptData.userEmail} | Phone: ${apptData.phone} | Date: ${apptData.date || "N/A"}`;
+    document.getElementById("chatPatientTitle").textContent =
+      `${apptData.patientName} (${apptData.trackingCode || "App"}) — ${apptData.doctor}`;
+    document.getElementById("chatPatientSub").textContent =
+      `Phone: ${apptData.phone} | IP: ${apptData.ipAddress || "N/A"} | ${apptData.deviceInfo || ""}`;
     document.getElementById("chatStatusControl").style.display = "block";
     document.getElementById("statusSelect").value = apptData.status || "Pending";
     document.getElementById("adminChatForm").style.display = "flex";
 
-    // Highlight active card
-    document.querySelectorAll(".appt-item").forEach(el => el.classList.remove("selected"));
+    document.querySelectorAll(".appt-item").forEach(el => {
+      el.classList.toggle("selected", el.dataset.apptId === apptId);
+    });
 
     if (unsubscribeChat) unsubscribeChat();
 
@@ -721,35 +729,6 @@
       box.scrollTop = box.scrollHeight;
     });
   }
-
-  document.getElementById("statusSelect").addEventListener("change", async (e) => {
-    if (!selectedAppointmentId) return;
-    const newStatus = e.target.value;
-    await updateDoc(doc(db, "appointments", selectedAppointmentId), { status: newStatus });
-    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
-      senderRole: "admin",
-      senderName: "Admin (Status Update)",
-      text: `Appointment status updated to: ${newStatus}`,
-      createdAt: serverTimestamp()
-    });
-  });
-
-  document.getElementById("adminChatForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!selectedAppointmentId) return;
-    const input = document.getElementById("adminChatInput");
-    const text = input.value.trim();
-    if (!text) return;
-
-    input.value = "";
-    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
-      senderRole: "admin",
-      senderName: "Admin (Dream Drugs House)",
-      text,
-      createdAt: serverTimestamp()
-    });
-  });
-
   // ==================== CONTACT US MESSAGES ====================
   function loadContactsRealtime() {
     const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"));

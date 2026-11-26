@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -16,12 +16,10 @@ const firebaseConfig = {
 export const ADMIN_EMAIL = "tanmoy@bca.bala";
 
 export const app = initializeApp(firebaseConfig);
-try { getAnalytics(app); } catch (e) { /* Ignore analytics errors locally */ }
+try { getAnalytics(app); } catch (e) { /* Ignore local analytics errors */ }
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: "select_account" });
 
 export function escapeHtml(str = "") {
   return String(str)
