@@ -425,7 +425,7 @@
   let unsubscribeChat = null;
   let doctorsCache = {};
 
-  // 1. Auth Guard
+  // 1. Admin Auth Guard
   onAuthStateChanged(auth, async (user) => {
     if (!user || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
       if (user) await signOut(auth);
@@ -453,7 +453,7 @@
     });
   });
 
-  // Helper: Compress uploaded image file to compact Base64 JPEG
+  // Helper: Compress uploaded image file to Base64 JPEG
   function compressImageToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -595,7 +595,7 @@
     }
   });
 
-  // One-click migration of your original 2 doctors
+  // One-click import of the original 2 doctors
   document.getElementById("seedDoctorsBtn").addEventListener("click", async () => {
     const initialDoctors = [
       {
@@ -619,7 +619,7 @@
     alert("Initial 2 doctors imported!");
   });
 
- // ==================== APPOINTMENTS & CHAT ====================
+  // ==================== APPOINTMENTS & CHAT ====================
   function loadAppointmentsRealtime() {
     const q = query(collection(db, "appointments"), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
@@ -729,6 +729,35 @@
       box.scrollTop = box.scrollHeight;
     });
   }
+
+  document.getElementById("statusSelect").addEventListener("change", async (e) => {
+    if (!selectedAppointmentId) return;
+    const newStatus = e.target.value;
+    await updateDoc(doc(db, "appointments", selectedAppointmentId), { status: newStatus });
+    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
+      senderRole: "admin",
+      senderName: "Admin (Status Update)",
+      text: `Appointment status updated to: ${newStatus}`,
+      createdAt: serverTimestamp()
+    });
+  });
+
+  document.getElementById("adminChatForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!selectedAppointmentId) return;
+    const input = document.getElementById("adminChatInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = "";
+    await addDoc(collection(db, "appointments", selectedAppointmentId, "messages"), {
+      senderRole: "admin",
+      senderName: "Admin (Dream Drugs House)",
+      text,
+      createdAt: serverTimestamp()
+    });
+  });
+
   // ==================== CONTACT US MESSAGES ====================
   function loadContactsRealtime() {
     const q = query(collection(db, "contacts"), orderBy("createdAt", "desc"));
