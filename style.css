@@ -25,6 +25,7 @@ header {
     font-size: 23px;
     font-weight: bold;
     color: #087dbb;
+    text-decoration: none;
 }
 
 nav {
@@ -418,4 +419,19 @@ footer {
         width: auto;
         margin: 15px;
     }
+}
+nav {
+    align-items: center;
+}
+
+.admin-nav-btn {
+    background: #078acb;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 7px;
+    transition: background 0.2s ease;
+}
+
+.admin-nav-btn:hover {
+    background: #005f94;
 }
